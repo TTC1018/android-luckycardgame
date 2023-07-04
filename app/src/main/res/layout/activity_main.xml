@@ -6,4 +6,122 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.03" />
+
+    <View
+        android:id="@+id/v_top"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_yellow_rounded"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/gl_top" />
+
+
+    <TextView
+        android:id="@+id/tv_first"
+        style="@style/LuckyCardTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/board_first_name"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintHeight_percent="0.11"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/v_top" />
+
+    <TextView
+        android:id="@+id/tv_second"
+        style="@style/LuckyCardTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/board_second_name"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintHeight_percent="0.11"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_first" />
+
+    <TextView
+        android:id="@+id/tv_third"
+        style="@style/LuckyCardTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/board_third_name"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintHeight_percent="0.11"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_second" />
+
+    <TextView
+        android:id="@+id/tv_fourth"
+        style="@style/LuckyCardTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/board_fourth_name"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintHeight_percent="0.11"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_third" />
+
+    <TextView
+        android:id="@+id/tv_fifth"
+        style="@style/LuckyCardTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/board_fifth_name"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintHeight_percent="0.11"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_fourth"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.97" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/ba_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_fourth, tv_fifth" />
+
+    <View
+        android:id="@+id/v_bottom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_gray_rounded"
+        app:layout_constraintBottom_toTopOf="@id/gl_bottom"
+        app:layout_constraintEnd_toStartOf="@id/gl_end"
+        app:layout_constraintStart_toEndOf="@id/gl_start"
+        app:layout_constraintTop_toBottomOf="@id/ba_bottom" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

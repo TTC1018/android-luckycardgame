@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LuckyCardGame</string>
+    <string name="board_first_name">A</string>
+    <string name="board_second_name">B</string>
+    <string name="board_third_name">C</string>
+    <string name="board_fourth_name">D</string>
+    <string name="board_fifth_name">E</string>
 </resources>
