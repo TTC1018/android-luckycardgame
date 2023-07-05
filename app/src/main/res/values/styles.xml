@@ -9,4 +9,8 @@
         <item name="android:textSize">20sp</item>
         <item name="android:background">@drawable/bg_gray_light_rounded</item>
     </style>
+
+    <style name="LuckyCardToggleButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="iconGravity">textStart</item>
+    </style>
 </resources>

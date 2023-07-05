@@ -5,4 +5,5 @@
     <string name="board_third_name">C</string>
     <string name="board_fourth_name">D</string>
     <string name="board_fifth_name">E</string>
+    <string name="people_num">%1$d명</string>
 </resources>

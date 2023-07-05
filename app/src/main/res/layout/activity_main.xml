@@ -1,124 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.03" />
+    <data>
 
-    <View
-        android:id="@+id/v_top"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:background="@drawable/bg_yellow_rounded"
-        app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toTopOf="@+id/gl_top" />
+        <import type="android.view.View" />
 
-    <TextView
-        android:id="@+id/tv_first"
-        style="@style/LuckyCardTextViewStyle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/board_first_name"
-        app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintHeight_percent="0.11"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/v_top" />
+        <variable
+            name="viewModel"
+            type="com.example.luckycardgame.MainActivityViewModel" />
+    </data>
 
-    <TextView
-        android:id="@+id/tv_second"
-        style="@style/LuckyCardTextViewStyle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/board_second_name"
-        app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintHeight_percent="0.11"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_first" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_third"
-        style="@style/LuckyCardTextViewStyle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/board_third_name"
-        app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintHeight_percent="0.11"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_second" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.03" />
 
-    <TextView
-        android:id="@+id/tv_fourth"
-        style="@style/LuckyCardTextViewStyle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/board_fourth_name"
-        app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintHeight_percent="0.11"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_third" />
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/tg_buttons"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            app:checkedButton="@id/btn_first_toggle"
+            app:layout_constraintEnd_toStartOf="@+id/gl_end"
+            app:layout_constraintStart_toStartOf="@+id/gl_start"
+            app:layout_constraintTop_toTopOf="@+id/gl_top"
+            app:selectionRequired="true"
+            app:singleSelection="true">
 
-    <TextView
-        android:id="@+id/tv_fifth"
-        style="@style/LuckyCardTextViewStyle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/board_fifth_name"
-        app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintHeight_percent="0.11"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_fourth" />
+            <Button
+                android:id="@+id/btn_first_toggle"
+                style="@style/LuckyCardToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{@string/people_num(3)}"
+                app:icon="@drawable/ic_check"
+                tools:text="3명" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.05" />
+            <Button
+                style="@style/LuckyCardToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{@string/people_num(4)}"
+                tools:text="4명" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.95" />
+            <Button
+                style="@style/LuckyCardToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{@string/people_num(5)}"
+                tools:text="5명" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.97" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/ba_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="tv_fourth, tv_fifth" />
+        <TextView
+            android:id="@+id/tv_first"
+            style="@style/LuckyCardTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/board_first_name"
+            app:layout_constraintEnd_toStartOf="@+id/gl_end"
+            app:layout_constraintHeight_percent="0.11"
+            app:layout_constraintStart_toStartOf="@+id/gl_start"
+            app:layout_constraintTop_toBottomOf="@+id/tg_buttons" />
 
-    <View
-        android:id="@+id/v_bottom"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_gray_rounded"
-        app:layout_constraintBottom_toTopOf="@id/gl_bottom"
-        app:layout_constraintEnd_toStartOf="@id/gl_end"
-        app:layout_constraintStart_toEndOf="@id/gl_start"
-        app:layout_constraintTop_toBottomOf="@id/ba_bottom" />
-    
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_second"
+            style="@style/LuckyCardTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/board_second_name"
+            app:layout_constraintEnd_toStartOf="@+id/gl_end"
+            app:layout_constraintHeight_percent="0.11"
+            app:layout_constraintStart_toStartOf="@+id/gl_start"
+            app:layout_constraintTop_toBottomOf="@+id/tv_first" />
+
+        <TextView
+            android:id="@+id/tv_third"
+            style="@style/LuckyCardTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/board_third_name"
+            app:layout_constraintEnd_toStartOf="@+id/gl_end"
+            app:layout_constraintHeight_percent="0.11"
+            app:layout_constraintStart_toStartOf="@+id/gl_start"
+            app:layout_constraintTop_toBottomOf="@+id/tv_second" />
+
+        <TextView
+            android:id="@+id/tv_fourth"
+            style="@style/LuckyCardTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/board_fourth_name"
+            android:visibility="@{viewModel.userNum >= 4 ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintEnd_toStartOf="@+id/gl_end"
+            app:layout_constraintHeight_percent="0.11"
+            app:layout_constraintStart_toStartOf="@+id/gl_start"
+            app:layout_constraintTop_toBottomOf="@+id/tv_third" />
+
+        <TextView
+            android:id="@+id/tv_fifth"
+            style="@style/LuckyCardTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/board_fifth_name"
+            android:visibility="@{viewModel.userNum == 5 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toStartOf="@+id/gl_end"
+            app:layout_constraintHeight_percent="0.11"
+            app:layout_constraintStart_toStartOf="@+id/gl_start"
+            app:layout_constraintTop_toBottomOf="@+id/tv_fourth" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.95" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.97" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/ba_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="tv_fourth, tv_fifth" />
+
+        <View
+            android:id="@+id/v_bottom"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_gray_rounded"
+            app:layout_constraintBottom_toTopOf="@id/gl_bottom"
+            app:layout_constraintEnd_toStartOf="@id/gl_end"
+            app:layout_constraintStart_toEndOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/ba_bottom" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
