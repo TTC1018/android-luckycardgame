@@ -31,11 +31,11 @@ class MainActivity : AppCompatActivity() {
     private fun addToggleChangedListener() {
         binding.tgButtons.addOnButtonCheckedListener { group, checkedId, isChecked ->
             val toggleBtn = group.findViewById<MaterialButton>(checkedId)
-            val userNum = toggleBtn.extractNumWithOutLetter()
+            val userCount = toggleBtn.extractNumWithOutLetter()
             when (isChecked) {
                 true -> {
                     toggleBtn.icon = AppCompatResources.getDrawable(this, R.drawable.ic_check)
-                    viewModel.reset(userNum)
+                    viewModel.reset(userCount)
                 }
                 false -> toggleBtn.icon = null
             }
