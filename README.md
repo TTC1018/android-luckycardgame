@@ -43,5 +43,41 @@
 <img width="973" alt="image" src="https://github.com/TTC1018/android-luckycardgame/assets/39405316/4b04cd59-c7dc-4b68-ad97-8ff346ee87bb">
 
 ## Task 3
+### User 클래스 구현
+- `userId: Int`: 유저의 고유 아이디 (현재는 단순히 순서로 설정되어 있음)
+- `cards: List<Card>`: 카드 목록. `var` 변수지만, `List` 타입으로 직접적인 수정은 불가능
+
+### LuckyGame 클래스 구현
+#### 변수
+- `cards: Array<Array<User>>`: 레포지토리에서 생성된 전체 카드 목록을 저장. 생성자 파라미터
+- `userCount: Int`: 전체 인원 수를 저장. 기본 값 3으로 설정됨
+- `users: Array<User>`: 전체 유저를 저장. `MAX_USER`(과제 요구사항에서는 5) 만큼의 유저를 보관
+- `shuffledCards: List<Card>`: 섞인 카드들을 참조하는 변수
+- `leftCards: List<Card>`: 유저들에게 나눠주고 남은 카드를 참조하는 변수
+
+#### 함수
+- `reGame(userCount: Int)`: 카드를 다시 섞고 유저들에게 카드 목록을 설정. `LuckyGame` 클래스의 함수 대부분을 호출.
+- `shuffleAllCards(userCount: Int)`: 전체 카드 목록을 복사하고 섞음
+- `clearAllHands()`: 모든 `User`의 카드 목록을 비움. `cards` 변수에 `emptyList()`를 할당
+- `makeUserWithCards()`: 섞은 카드를 각 `User`에게 나눠줌. 남은 카드 목록도 `leftCards`에 할당
+
+#### companion object
+- 유저 별 카드 개수, 남은 카드 수를 참고할 수 있는 `Map`을 선언
+- `cardCountMap`: 유저 별 나눠주어야 하는 카드 개수를 저장
+- `leftCountMap` : 유저 별로 나눠주고 남은 카드 개수를 저장
+
+### 카드 목록 출력
+#### 카드 가로 길이 설정
+- 최상위 `ConstraintLayout`의 `width` 값의 일정 비율로 카드 가로 길이를 설정
+
+#### 카드 겹치기
+- `RecyclerView.ItemDecoration`을 활용하여 카드간 간격 조정
+- 간격 또한 최상위 `ConstraintLayout`의 `width` 값 고려해서 일정 비율로 설정
+- 최하단 남은 카드 간격은 다른 계산 방식으로 `ItemDecoration` 설정
+
+- **발생 이슈**
+    * 카드 목록 갱신할 때마다 카드 가로 길이가 들쭉날쭉해지는 것을 확인
+    * `ViewHolder`내의 `init` 블록 `doOnAttach` 에서 가로 길이를 설정하고 있었는데, 몇몇 ViewHolder는 그대로 재활용되다보니 이전 크기의 카드가 그대로 남게됨.
+    * 우선은 ListAdapter의 `areItemsTheSame`과 `areContentsTheSame`을 모두 `false`를 리턴하게 하여 무조건 RecyclerView 전체를 갱신하도록 변경
 
 ## Task 4
