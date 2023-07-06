@@ -1,11 +1,13 @@
-package com.example.luckycardgame
+package com.example.luckycardgame.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.databinding.DataBindingUtil
+import com.example.luckycardgame.R
 import com.example.luckycardgame.databinding.ActivityMainBinding
+import com.example.luckycardgame.util.extractNumWithOutLetter
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,11 +31,11 @@ class MainActivity : AppCompatActivity() {
     private fun addToggleChangedListener() {
         binding.tgButtons.addOnButtonCheckedListener { group, checkedId, isChecked ->
             val toggleBtn = group.findViewById<MaterialButton>(checkedId)
-            val userNum = toggleBtn.text.first().digitToInt()
+            val userNum = toggleBtn.extractNumWithOutLetter()
             when (isChecked) {
                 true -> {
                     toggleBtn.icon = AppCompatResources.getDrawable(this, R.drawable.ic_check)
-                    viewModel.setUserNum(userNum)
+                    viewModel.reset(userNum)
                 }
                 false -> toggleBtn.icon = null
             }
