@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="LuckyCardTextViewStyle" parent="Widget.AppCompat.TextView">
         <item name="android:textAlignment">viewStart</item>
         <item name="android:gravity">center_vertical</item>
@@ -12,5 +13,20 @@
 
     <style name="LuckyCardToggleButton" parent="Widget.Material3.Button.OutlinedButton">
         <item name="iconGravity">textStart</item>
+    </style>
+
+    <style name="LuckyCardListStyle">
+        <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+    </style>
+
+    <style name="LuckyCardNumberTextViewStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>
