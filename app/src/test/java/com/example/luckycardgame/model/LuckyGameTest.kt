@@ -125,7 +125,7 @@ class LuckyGameTest {
         assert(true)
     }
 
-    // 각 사용자가 동일한 카드 갖는지 테스트
+    // 각 사용자가 동일한 카드 수를 갖는지 테스트
     @Test
     fun reGame_HandOutShuffledCards_AllUsersHaveRightNumberOfCards() {
         for (userCount in MIN_USER..MAX_USER) {
