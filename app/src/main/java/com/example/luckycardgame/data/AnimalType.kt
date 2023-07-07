@@ -8,7 +8,7 @@ enum class AnimalType(val emoji: String) {
 
 // 미사용이지만 sealed로도 구현해보기
 sealed class Animal(val emoji: String) {
-    class Dog: Animal("\uD83D\uDC36")
-    class Cat: Animal("\uD83D\uDC31")
-    class Cow: Animal("\uD83D\uDC2E")
+    object Dog: Animal("\uD83D\uDC36")
+    object Cat: Animal("\uD83D\uDC31")
+    object Cow: Animal("\uD83D\uDC2E")
 }
