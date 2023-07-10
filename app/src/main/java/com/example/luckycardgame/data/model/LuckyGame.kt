@@ -23,6 +23,7 @@ class LuckyGame(
         setUserCount(userCount)
         shuffleAllCards(userCount)
         makeUserWithCards()
+        sortUserCardsByNum()
     }
 
     private fun shuffleAllCards(userCount: Int) {
