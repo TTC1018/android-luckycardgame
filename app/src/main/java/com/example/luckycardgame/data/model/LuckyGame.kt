@@ -16,7 +16,7 @@ class LuckyGame(
     private var shuffledCards: List<Card> = emptyList()
     private var leftCards: List<Card> = emptyList()
 
-    fun reGame(userCount: Int) {
+    fun resetGame(userCount: Int) {
         clearAllHands()
         setUserCount(userCount)
         shuffleAllCards(userCount)
