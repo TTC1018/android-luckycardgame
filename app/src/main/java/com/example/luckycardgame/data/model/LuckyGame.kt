@@ -1,5 +1,8 @@
 package com.example.luckycardgame.data.model
 
+import kotlin.math.absoluteValue
+import com.example.luckycardgame.presentation.OnFlipCardListener
+
 const val MIN_USER = 3
 const val MAX_USER = 5
 const val MAX_NUMBER = 12
@@ -11,19 +14,94 @@ private val TAG = LuckyGame::class.java.simpleName
 class LuckyGame(
     private val cards: Array<Array<Card>>,
     private var userCount: Int = 3,
-): OnFlipCardListener {
+) : OnFlipCardListener, CardCheckable {
 
     val users: List<User> = List(MAX_USER) { User(it, emptyList()) }
     private var shuffledCards: List<Card> = emptyList()
     private var leftCards: List<Card> = emptyList()
     private val cardIdxes: List<IntArray> = List(MAX_USER) { intArrayOf(0, cardCountMap[MAX_USER] ?: throw Exception("등록되지 않은 유저 수: $MAX_USER")).also { it[1]-- } }
+    private var endFlag = false
+    private val chanceCounter = IntArray(MAX_USER) { 3 }
+    private val flippedCounter = Array(MAX_USER) { mutableMapOf<Int, Int>() }
+    private var winners = emptySet<Int>()
 
     fun resetGame(userCount: Int) {
+        resetRound(userCount)
+        clearTurn(userCount)
         clearAllHands(userCount)
-        setUserCount(userCount)
         shuffleAllCards(userCount)
         makeUserWithCards()
         sortUserCardsByNum()
+    }
+
+    private fun resetRound(userCount: Int) {
+        endFlag = false
+        winners = emptySet()
+        for (i in 0 until userCount) {
+            flippedCounter[i].clear()
+        }
+    }
+
+    private fun clearTurn(userCount: Int) {
+        for (i in 0 until userCount) {
+            chanceCounter[i] = 3
+        }
+    }
+
+    private fun checkTurnContinue(): Set<Int> {
+        val winners = findWinner()
+        if (winners.isNotEmpty() || cardIdxes.slice(0 until userCount).all { it[0] > it[1] })
+            endFlag = true
+
+        this.winners = winners.toSortedSet()
+        return winners
+    }
+
+    private fun findWinner(): Set<Int> {
+        return buildSet {
+            // 7 카드 보유자 찾기
+            addAll(findSevenOwner())
+
+            // 서로 짝을 맞췄을 때 합 또는 차가 7이 되는 경우 찾기
+            addAll(findSevenSumOwners())
+        }
+    }
+
+    private fun findSevenSumOwners(): Collection<Int> {
+        return buildList {
+            val numOwner = mutableMapOf<Int, Int>()
+            val cands = flippedCounter.withIndex()
+                .filter { (i, _) -> checkUserHasTripleCards(i) }
+                .map { (userId, map) ->
+                    val numOfThreeCards = map.filterValues { v -> v == 3 }
+                    numOfThreeCards.keys.forEach { numOwner[it] = userId }
+                    numOfThreeCards.keys
+                }.flatten()
+
+            for (i in cands.indices) {
+                for (j in i + 1 until cands.size) {
+                    if (cands[i] + cands[j] == 7 || (cands[i] - cands[j]).absoluteValue == 7)
+                        addAll(
+                            listOf(
+                                numOwner[cands[i]]
+                                    ?: throw Exception("등록되지 않은 숫자 소유자: ${cands[i]}"),
+                                numOwner[cands[j]] ?: throw Exception("등록되지 않은 숫자 소유자: ${cands[j]}")
+                            )
+                        )
+                }
+            }
+        }
+    }
+
+    private fun findSevenOwner(): Collection<Int> {
+        return buildList {
+            for (userId in 0 until userCount) {
+                if (checkUserHasTripleCards(userId)
+                    && flippedCounter[userId].any { (num, cnt) -> num == 7 && cnt == 3 }) {
+                    add(userId)
+                }
+            }
+        }
     }
 
     private fun shuffleAllCards(userCount: Int) {
@@ -40,7 +118,9 @@ class LuckyGame(
     private fun clearAllHands(userCount: Int) {
         // 뒤집은 상태 초기화
         cards.forEach { card -> card.forEach { it.flipped = false } }
-        
+        // 같은 3장 매치된 상태 초기화
+        cards.forEach { card -> card.forEach { it.matched = false } }
+
         // 양쪽 참조 인덱스 초기화
         for (i in cardIdxes.indices) {
             cardIdxes[i][0] = 0
@@ -65,10 +145,6 @@ class LuckyGame(
         leftCards = shuffledCards.takeLast(left)
     }
 
-    private fun setUserCount(userCount: Int) {
-        this.userCount = userCount
-    }
-
     fun sortUserCardsByNum() {
         for (i in 0 until userCount) {
             users[i].cards = users[i].cards.sortedBy { it.num }
@@ -77,6 +153,19 @@ class LuckyGame(
 
     fun sortLeftCardsByNum() {
         leftCards = leftCards.sortedBy { it.num }
+    }
+
+    override fun checkPicked(userId: Int, cardIdx: Int): List<Int> {
+        val cardsOfUser = users[userId].cards
+        val cardNum = cardsOfUser[cardIdx].num
+        return buildList {
+            if (flippedCounter[userId][cardNum] == 3) {
+                cardsOfUser
+                    .withIndex()
+                    .filter { (_, v) -> v.num == cardNum }
+                    .forEach { (i, v) -> v.matched = true; add(i) }
+            }
+        }
     }
 
     private fun checkUserHasTripleCards(userId: Int): Boolean {
@@ -92,26 +181,46 @@ class LuckyGame(
 
     override fun onFlipCard(userId: Int, cardPos: Int) {
         val (leftIdx, rightIdx) = cardIdxes[userId]
-        if (leftIdx > rightIdx) {
+        if (leftIdx > rightIdx || chanceCounter[userId] == 0) {
             return
         }
 
         val isLeft = leftIdx == cardPos
         val isRight = rightIdx == cardPos
+        val flipCounterOfUser = flippedCounter[userId]
         when {
             isLeft -> {
-                users[userId].cards[leftIdx].flipped = true
+                val card = users[userId].cards[leftIdx]
+                card.flipped = true
+                flipCounterOfUser[card.num] = flipCounterOfUser.getOrDefault(card.num, 0) + 1
                 cardIdxes[userId][0]++
+                chanceCounter[userId]--
+            }
 
-            }
             isRight -> {
-                users[userId].cards[rightIdx].flipped = true
+                val card = users[userId].cards[rightIdx]
+                card.flipped = true
+                flipCounterOfUser[card.num] = flipCounterOfUser.getOrDefault(card.num, 0) + 1
                 cardIdxes[userId][1]--
+                chanceCounter[userId]--
             }
+        }
+
+        if (isEndOfTurn()) {
+            clearTurn(userCount)
+            checkTurnContinue()
         }
     }
 
-    fun compareTwoUsersCardWithLeftCard(userOneId: Int, userTwoId: Int, leftCard: Card = leftCards.random()): Boolean {
+    private fun isEndOfTurn(): Boolean = chanceCounter.sliceArray(0 until userCount).all { it == 0 }
+            || cardIdxes.slice(0 until userCount).all { it[0] > it[1] }
+
+
+    fun compareTwoUsersCardWithLeftCard(
+        userOneId: Int,
+        userTwoId: Int,
+        leftCard: Card = leftCards.random()
+    ): Boolean {
         val minNumOfUserOne = users[userOneId].cards.minOf { it.num }
         val maxNumOfUserOne = users[userOneId].cards.maxOf { it.num }
         val minNumOfUserTwo = users[userTwoId].cards.minOf { it.num }
@@ -124,6 +233,10 @@ class LuckyGame(
     }
     
     fun getLeftCards() = this.leftCards
+
+    fun getEndFlag() = this.endFlag
+
+    fun getWinners() = this.winners
 
     companion object {
         val cardCountMap = buildMap { put(3, 8); put(4, 7); put(5, 6) }
@@ -141,6 +254,6 @@ class LuckyGame(
 
 }
 
-interface OnFlipCardListener {
-    fun onFlipCard(userId: Int, cardPos: Int)
+interface CardCheckable {
+    fun checkPicked(userId: Int, cardIdx: Int): List<Int>
 }
