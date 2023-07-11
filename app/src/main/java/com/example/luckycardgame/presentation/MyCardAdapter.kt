@@ -12,16 +12,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luckycardgame.data.model.Card
+import com.example.luckycardgame.data.model.CardCheckable
 import com.example.luckycardgame.data.model.LuckyGame
 import com.example.luckycardgame.data.model.MAX_CARD_COUNT
 import com.example.luckycardgame.data.model.MIN_USER
-import com.example.luckycardgame.data.model.OnFlipCardListener
 import com.example.luckycardgame.databinding.ItemCardBinding
 import kotlin.math.ceil
 
 class MyCardAdapter(
     private val userId: Int,
-    private val onFlipCardListener: OnFlipCardListener
+    private val onFlipCardListener: OnFlipCardListener,
+    private val cardCheckable: CardCheckable
 ) : ListAdapter<Card, MyCardViewHolder>(diffUtil), OnCardClickListener {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyCardViewHolder =
@@ -39,7 +40,14 @@ class MyCardAdapter(
 
     override fun onCardClick(userId: Int, pos: Int) {
         onFlipCardListener.onFlipCard(userId, pos)
-        notifyItemChanged(pos)
+
+        val shouldBeHidden = cardCheckable.checkPicked(userId, pos)
+        if (shouldBeHidden.isNotEmpty()) {
+            shouldBeHidden.forEach { notifyItemChanged(it) }
+        }
+        else {
+            notifyItemChanged(pos)
+        }
     }
 
     companion object {
@@ -110,3 +118,6 @@ interface OnCardClickListener {
     fun onCardClick(userId: Int, pos: Int)
 }
 
+interface OnFlipCardListener {
+    fun onFlipCard(userId: Int, cardPos: Int)
+}
