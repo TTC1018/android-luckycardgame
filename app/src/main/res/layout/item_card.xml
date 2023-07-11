@@ -29,6 +29,7 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:onClick="@{() -> onCardClickListener.onCardClick(userId, position)}"
+        app:fadeOutIfPicked="@{card.matched}"
         android:background="@drawable/bg_white_rounded_border"
         android:focusable="true">
 
