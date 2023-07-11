@@ -26,15 +26,16 @@ class LuckyGame(
     private var winners = emptySet<Int>()
 
     fun resetGame(userCount: Int) {
-        resetRound(userCount)
-        clearTurn(userCount)
-        clearAllHands(userCount)
-        shuffleAllCards(userCount)
+        setUserCount(userCount)
+        resetRound()
+        clearTurn()
+        clearAllHands()
+        shuffleAllCards()
         makeUserWithCards()
         sortUserCardsByNum()
     }
 
-    private fun resetRound(userCount: Int) {
+    private fun resetRound() {
         endFlag = false
         winners = emptySet()
         for (i in 0 until userCount) {
@@ -42,7 +43,7 @@ class LuckyGame(
         }
     }
 
-    private fun clearTurn(userCount: Int) {
+    private fun clearTurn() {
         for (i in 0 until userCount) {
             chanceCounter[i] = 3
         }
@@ -95,16 +96,15 @@ class LuckyGame(
 
     private fun findSevenOwner(): Collection<Int> {
         return buildList {
-            for (userId in 0 until userCount) {
-                if (checkUserHasTripleCards(userId)
-                    && flippedCounter[userId].any { (num, cnt) -> num == 7 && cnt == 3 }) {
+            findTripleCardsUsers().forEach { userId ->
+                if (flippedCounter[userId].any { (num, cnt) -> num == 7 && cnt == 3 }) {
                     add(userId)
                 }
             }
         }
     }
 
-    private fun shuffleAllCards(userCount: Int) {
+    private fun shuffleAllCards() {
         val duplicatedCards = Array(3) { i -> cards[i].copyOf() }
         if (userCount == 3) {
             for (i in 0 until userCount) {
@@ -115,7 +115,7 @@ class LuckyGame(
         shuffledCards = duplicatedCards.flatten().shuffled()
     }
 
-    private fun clearAllHands(userCount: Int) {
+    private fun clearAllHands() {
         // 뒤집은 상태 초기화
         cards.forEach { card -> card.forEach { it.flipped = false } }
         // 같은 3장 매치된 상태 초기화
@@ -207,7 +207,7 @@ class LuckyGame(
         }
 
         if (isEndOfTurn()) {
-            clearTurn(userCount)
+            clearTurn()
             checkTurnContinue()
         }
     }
@@ -237,6 +237,10 @@ class LuckyGame(
     fun getEndFlag() = this.endFlag
 
     fun getWinners() = this.winners
+
+    private fun setUserCount(userCount: Int) {
+        this.userCount = userCount
+    }
 
     companion object {
         val cardCountMap = buildMap { put(3, 8); put(4, 7); put(5, 6) }
