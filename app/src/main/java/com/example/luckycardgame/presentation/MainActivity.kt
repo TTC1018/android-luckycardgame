@@ -9,6 +9,7 @@ import com.example.luckycardgame.R
 import com.example.luckycardgame.databinding.ActivityMainBinding
 import com.example.luckycardgame.util.extractNumWithOutLetter
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -26,6 +27,29 @@ class MainActivity : AppCompatActivity() {
         binding.viewModel = viewModel
 
         addToggleChangedListener()
+        observeGameEnd()
+    }
+
+    private fun observeGameEnd() {
+        viewModel.endFlag.observe(this) { flag ->
+            when (flag) {
+                true -> {
+                    val userCount = viewModel.userCount.value
+                    if (userCount != null) {
+                        viewModel.reset(userCount)
+                        val msg = if (viewModel.winners.value.isNullOrEmpty().not()) {
+                            "승자: ${viewModel.winners.value?.map { 'A' + it }?.joinToString(" ")}"
+                        }
+                        else {
+                            getString(R.string.msg_game_end)
+                        }
+                        Snackbar.make(binding.layoutMain, msg, Snackbar.LENGTH_LONG)
+                            .show()
+                    }
+                }
+                false -> {}
+            }
+        }
     }
 
     private fun addToggleChangedListener() {
