@@ -28,7 +28,7 @@ class MainActivityViewModel @Inject constructor(
         _userCount.value = userCount
         luckyGame.resetGame(userCount)
 
-        _users.value = luckyGame.getUsers()
+        _users.value = luckyGame.users
         _leftCards.value = luckyGame.getLeftCards()
     }
 }
