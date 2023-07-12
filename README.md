@@ -148,3 +148,15 @@
 
 
 ## Task 6
+### Main 화면 - 결과 화면 연결
+* `registerForActivityResult`로 연결: deprecated된 `startActivityForResult` 대신 활용.  
+승자 확인 화면의 Result로 `userCount`를 전달받아 그에 맞게 게임을 리셋 (근데 이제보니 `LuckyGame`에 저장된 변수라서 굳이 전달받을 필요가 있나 싶긴 하다.)
+* `startResult: ActivityResultLauncher`: ViewModel의 `endFlag`가 `true`가 되면, 승자가 존재하는지 확인 후에 존재한다면 `startResult`의 `launch` 함수로 GameResultActivity`로 이동
+
+### 승자 판단 기능 추가 구현
+* `matchedCardsOfUsers: MutableMap<Int, Set<Int>`: 유저 별 3장 매칭된 카드의 번호를 기록
+
+### 결과 화면 구현 - `GameResultActivity` & `GameResultComposable`
+* `GameResultViewModel`: View가 화면에 그려지기 전에 `LuckyGame`의 게임 결과 관련 데이터를 참조하여 `StateFlow`에 보관
+* `onBackPressedDispatcher`: deprecated된 `onBackPressed`를 대신해 사용. 결과화면에서 백버튼으로 Main 화면으로 가지 못하게 차단.
+* 이외 `GameResultActivity`의 레이아웃은 Compose로 구현
