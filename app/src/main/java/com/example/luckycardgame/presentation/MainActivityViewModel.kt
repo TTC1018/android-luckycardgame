@@ -18,8 +18,8 @@ class MainActivityViewModel @Inject constructor(
     private val _userCount = MutableLiveData<Int>()
     val userCount: LiveData<Int> get() = _userCount
 
-    private val _users = MutableLiveData<Array<User>>()
-    val users: LiveData<Array<User>> get() = _users
+    private val _users: MutableLiveData<List<User>> = MutableLiveData<List<User>>()
+    val users: LiveData<List<User>> get() = _users
 
     private val _leftCards = MutableLiveData<List<Card>>()
     val leftCards: LiveData<List<Card>> get() = _leftCards

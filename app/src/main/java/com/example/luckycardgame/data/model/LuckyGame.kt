@@ -12,7 +12,7 @@ class LuckyGame(
 ) {
     private val TAG = this.javaClass.simpleName
 
-    val users = Array(MAX_USER) { User(it + 1, emptyList()) }
+    val users: List<User> = List(MAX_USER) { User(it + 1, emptyList()) }
     private var shuffledCards: List<Card> = emptyList()
     private var leftCards: List<Card> = emptyList()
 
