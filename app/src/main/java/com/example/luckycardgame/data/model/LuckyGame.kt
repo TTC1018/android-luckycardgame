@@ -24,6 +24,7 @@ class LuckyGame(
     private val chanceCounter = IntArray(MAX_USER) { 3 }
     private val flippedCounter = Array(MAX_USER) { mutableMapOf<Int, Int>() }
     private var winners = emptySet<Int>()
+    private val matchedCardsOfUsers: MutableMap<Int, Set<Int>> = mutableMapOf()
 
     fun resetGame(userCount: Int) {
         setUserCount(userCount)
@@ -38,6 +39,7 @@ class LuckyGame(
     private fun resetRound() {
         endFlag = false
         winners = emptySet()
+        matchedCardsOfUsers.clear()
         for (i in 0 until userCount) {
             flippedCounter[i].clear()
         }
@@ -76,6 +78,10 @@ class LuckyGame(
                 .map { (userId, map) ->
                     val numOfThreeCards = map.filterValues { v -> v == 3 }
                     numOfThreeCards.keys.forEach { numOwner[it] = userId }
+
+                    val matchedCardUser = matchedCardsOfUsers.getOrDefault(userId, setOf())
+                    matchedCardsOfUsers[userId] = matchedCardUser.plus(numOfThreeCards.keys)
+
                     numOfThreeCards.keys
                 }.flatten()
 
@@ -97,8 +103,13 @@ class LuckyGame(
     private fun findSevenOwner(): Collection<Int> {
         return buildList {
             findTripleCardsUsers().forEach { userId ->
-                if (flippedCounter[userId].any { (num, cnt) -> num == 7 && cnt == 3 }) {
-                    add(userId)
+                for ((num, cnt) in flippedCounter[userId]) {
+                    if (num == 7 && cnt == 3) {
+                        add(userId)
+
+                        val matchedCards = matchedCardsOfUsers.getOrDefault(userId, setOf())
+                        matchedCardsOfUsers[userId] = matchedCards.plus(num)
+                    }
                 }
             }
         }
@@ -231,12 +242,16 @@ class LuckyGame(
         val maxNumCount = setOf(maxNumOfUserOne, maxNumOfUserTwo, leftCardNumber).size
         return minNumCount == 1 || maxNumCount == 1
     }
-    
+
+    fun getUserCount() = userCount
+
     fun getLeftCards() = this.leftCards
 
     fun getEndFlag() = this.endFlag
 
     fun getWinners() = this.winners
+
+    fun getCardsOfWinners() = matchedCardsOfUsers
 
     private fun setUserCount(userCount: Int) {
         this.userCount = userCount
