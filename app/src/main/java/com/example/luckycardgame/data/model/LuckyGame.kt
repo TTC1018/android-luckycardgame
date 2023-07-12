@@ -251,7 +251,7 @@ class LuckyGame(
 
     fun getWinners() = this.winners
 
-    fun getCardsOfWinners() = matchedCardsOfUsers
+    fun getMatchedCardsOfUsers() = matchedCardsOfUsers
 
     private fun setUserCount(userCount: Int) {
         this.userCount = userCount

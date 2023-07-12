@@ -16,7 +16,7 @@ class GameResultViewModel @Inject constructor(
     private val _userCount = MutableStateFlow(luckyGame.getUserCount())
     val userCount: StateFlow<Int> get() = _userCount
 
-    private val _matchedCards = MutableStateFlow<Map<Int, Set<Int>>>(luckyGame.getCardsOfWinners())
+    private val _matchedCards = MutableStateFlow<Map<Int, Set<Int>>>(luckyGame.getMatchedCardsOfUsers())
     val matchedCards: StateFlow<Map<Int, Set<Int>>> get() = _matchedCards
 
     private val _winners = MutableStateFlow(luckyGame.getWinners())
