@@ -1,12 +1,15 @@
 package com.example.luckycardgame.presentation
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.databinding.DataBindingUtil
 import com.example.luckycardgame.R
 import com.example.luckycardgame.databinding.ActivityMainBinding
+import com.example.luckycardgame.presentation.result.GameResultActivity
 import com.example.luckycardgame.util.extractNumWithOutLetter
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
@@ -19,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = this.javaClass.simpleName
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainActivityViewModel by viewModels()
+    private val startResult = registerForGameResult()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,17 +34,26 @@ class MainActivity : AppCompatActivity() {
         observeGameEnd()
     }
 
+    private fun registerForGameResult() = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        val resetFlag = it.data?.extras?.getBoolean(KEY_RESET)
+        val userCount = it.data?.extras?.getInt(KEY_USERCOUNT)
+        if (resetFlag == true && userCount != null) {
+            viewModel.reset(userCount)
+        }
+    }
+
     private fun observeGameEnd() {
         viewModel.endFlag.observe(this) { flag ->
             when (flag) {
                 true -> {
                     val userCount = viewModel.userCount.value
                     if (userCount != null) {
-                        viewModel.reset(userCount)
                         val msg = if (viewModel.winners.value.isNullOrEmpty().not()) {
+                            startResult.launch(Intent(this, GameResultActivity::class.java))
                             "승자: ${viewModel.winners.value?.map { 'A' + it }?.joinToString(" ")}"
                         }
                         else {
+                            viewModel.reset(userCount)
                             getString(R.string.msg_game_end)
                         }
                         Snackbar.make(binding.layoutMain, msg, Snackbar.LENGTH_LONG)
@@ -64,5 +77,10 @@ class MainActivity : AppCompatActivity() {
                 false -> toggleBtn.icon = null
             }
         }
+    }
+
+    companion object {
+        const val KEY_RESET = "resetGame"
+        const val KEY_USERCOUNT = "userCount"
     }
 }
