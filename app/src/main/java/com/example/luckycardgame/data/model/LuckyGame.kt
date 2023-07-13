@@ -12,7 +12,7 @@ class LuckyGame(
 ) {
     private val TAG = this.javaClass.simpleName
 
-    val users: List<User> = List(MAX_USER) { User(it + 1, emptyList()) }
+    val users: List<User> = List(MAX_USER) { User(it, emptyList()) }
     private var shuffledCards: List<Card> = emptyList()
     private var leftCards: List<Card> = emptyList()
 
@@ -55,6 +55,39 @@ class LuckyGame(
         this.userCount = userCount
     }
 
+    fun sortUserCardsByNum() {
+        for (i in 0 until userCount) {
+            users[i].cards = users[i].cards.sortedBy { it.num }
+        }
+    }
+
+    fun sortLeftCardsByNum() {
+        leftCards = leftCards.sortedBy { it.num }
+    }
+
+    private fun checkUserHasTripleCards(userId: Int): Boolean {
+        val cardsOfUserId = users[userId].cards
+        return cardsOfUserId.groupBy { it.num }.mapValues { it.value.size }.containsValue(3)
+    }
+
+    fun findTripleCardsUsers(): List<Int> {
+        return users
+            .filter { checkUserHasTripleCards(it.userId) }
+            .map { it.userId }
+    }
+
+    fun compareTwoUsersCardWithLeftCard(userOneId: Int, userTwoId: Int, leftCard: Card = leftCards.random()): Boolean {
+        val minNumOfUserOne = users[userOneId].cards.minOf { it.num }
+        val maxNumOfUserOne = users[userOneId].cards.maxOf { it.num }
+        val minNumOfUserTwo = users[userTwoId].cards.minOf { it.num }
+        val maxNumOfUserTwo = users[userTwoId].cards.maxOf { it.num }
+        val leftCardNumber = leftCard.num
+
+        val minNumCount = setOf(minNumOfUserOne, minNumOfUserTwo, leftCardNumber).size
+        val maxNumCount = setOf(maxNumOfUserOne, maxNumOfUserTwo, leftCardNumber).size
+        return minNumCount == 1 || maxNumCount == 1
+    }
+    
     fun getLeftCards() = this.leftCards
 
     companion object {

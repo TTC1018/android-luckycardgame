@@ -81,3 +81,28 @@
     * 우선은 ListAdapter의 `areItemsTheSame`과 `areContentsTheSame`을 모두 `false`를 리턴하게 하여 무조건 RecyclerView 전체를 갱신하도록 변경
 
 ## Task 4
+### LuckyGame 추가 기능 구현
+* `sortUserCardsByNum()`: 사용자의 카드를 번호 오름차순으로 정렬
+* `sortLeftCardsByNum()`: 남은 카드를 번호 오름차순으로 정렬
+* `checkUserHasTripleCards(userId: Int): Boolean`: 특정 User ID를 갖는 사용자가 같은 번호 카드 3장을 갖는지 확인
+* `findTripleCardsUsers(): List<Int>`: 전체 사용자 중 같은 번호 카드 3장을 갖는 모든 사용자를 `List`에 담아 리턴
+* `compareTwoUsersCardWithLeftCard(`  
+  `	userOneId: Int,`  
+  `	userTwoId: Int,`
+  `	leftCard: Card = leftCards.random()`
+  `): Boolean`: 특정 User ID를 갖는 두 사용자의 최소/최대 카드 번호와 랜덤으로 선택된 남은 카드가 같은 번호를 갖는지 확인하고 `Boolean`으로 결과를 리턴
+
+### 테스트 케이스 작성
+* 테스트 케이스 네이밍
+  * 메소드명_기존상태_호출뒤예상결과
+
+* 작성한 테스트 케이스 목록
+  * 나눠준 카드와 남는 카드를 합쳤을 때 타입별로 12장씩 존재하는지
+  * 참여자가 3명인 경우에 12번 카드가 존재하지 않는지
+  * 이전에 나눠준 카드들과 다른 카드 목록을 갖는 유저가 한명이라도 있는지(카드가 섞였는지)
+  * 나눠주고 남은 카드 수가 올바른지
+  * 각 사용자가 동일한 카드 수를 갖는지
+  * 유저 별 카드를 번호 기준으로 정렬 후에 비내림차순인지
+  * 남은 카드를 번호 기준으로 정렬 후에 비내림차순인지
+  * 같은 번호 카드 세장을 가진 유저가 있는지
+  * 두 유저가 최소/최대 번호가 같은 카드를 가질 때, 랜덤 카드를 포함해 셋이 비교시 같은지 판단할 수 있는지
