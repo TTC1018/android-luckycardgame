@@ -34,7 +34,7 @@ class LuckyGameTest {
     @Before
     fun initLuckyGame() {
         luckyGame = LuckyGame(cardRepository.getCards())
-        luckyGame.reGame(MAX_USER) // 기본적으로 User 5명이라 가정하고 시작
+        luckyGame.resetGame(MAX_USER) // 기본적으로 User 5명이라 가정하고 시작
     }
 
     // 테스트 케이스 컨벤션
@@ -50,8 +50,8 @@ class LuckyGameTest {
             if (userCount == MIN_USER) // 3명은 번호12를 버리므로 총 33장
                 actualCountPerAnimal -= 1
 
-            luckyGame.reGame(userCount)
-            val activeUsersCards = luckyGame.getUsers().sliceArray(0 until userCount).map { it.cards }
+            luckyGame.resetGame(userCount)
+            val activeUsersCards = luckyGame.users.slice(0 until userCount).map { it.cards }
             val leftCards = luckyGame.getLeftCards()
             val cardCounterByAnimal = EnumMap(animalTypes.associateWith { 0 }).apply {
                 // 유저가 가진 카드 개수 타입 별로 세기
@@ -79,8 +79,8 @@ class LuckyGameTest {
     // 참여자가 3명인 경우에 12번 카드가 존재하지 않는지 테스트
     @Test
     fun reGame_ThreeUsersPlay_NoTwelfthCard(){
-        luckyGame.reGame(MIN_USER)
-        val activeUsersCards = luckyGame.getUsers().sliceArray(0 until MIN_USER).map { it.cards }
+        luckyGame.resetGame(MIN_USER)
+        val activeUsersCards = luckyGame.users.slice(0 until MIN_USER).map { it.cards }
 
         // 3번째 유저까지 카드 목록 조회
         // 12번 카드가 존재하면 안 됨
@@ -95,10 +95,10 @@ class LuckyGameTest {
     // 이전에 나눠준 카드들과 다른 카드 목록을 갖는 유저가 한명이라도 있는지(섞였는지) 확인
     @Test
     fun reGame_HandOutShuffledCards_AtLeastOneUserHasDifferentCards() {
-        val users = luckyGame.getUsers()
+        val users = luckyGame.users
         val prevCards = users.map { it.cards.toList() } // 지금 각 유저가 갖고 있는 카드
 
-        luckyGame.reGame(MAX_USER) // 카드 다시 나눠주기
+        luckyGame.resetGame(MAX_USER) // 카드 다시 나눠주기
         val nextCards = users.map { it.cards } // 게임 재시작 후 유저가 갖고 있는 카드
 
         val result = prevCards.zip(nextCards).any { (prev, next) -> prev != next }
@@ -109,7 +109,7 @@ class LuckyGameTest {
     @Test
     fun reGame_HandOutShuffledCards_LeftCardsMustBeSameWithNumberOfMap() {
         for (userCount in MIN_USER..MAX_USER) {
-            luckyGame.reGame(userCount)
+            luckyGame.resetGame(userCount)
             val registeredCount = LuckyGame.leftCountMap[userCount] ?: throw AssertionError("남은 카드 수에 등록되지 않은 유저 수: $userCount")
             val handOutCountPerUser = LuckyGame.cardCountMap[userCount] ?: throw AssertionError("유저 별 카드 수에 등록되지 않은 유저 수: $userCount")
             var actualCount = (MAX_CARD_COUNT - (userCount * handOutCountPerUser)) // 전체 카드 개수 - (유저 수 * 유저별 카드 개수)
@@ -129,8 +129,8 @@ class LuckyGameTest {
     @Test
     fun reGame_HandOutShuffledCards_AllUsersHaveRightNumberOfCards() {
         for (userCount in MIN_USER..MAX_USER) {
-            luckyGame.reGame(userCount)
-            val activeUserCardCounts = luckyGame.getUsers().sliceArray(0 until userCount).map { it.cards.size }
+            luckyGame.resetGame(userCount)
+            val activeUserCardCounts = luckyGame.users.slice(0 until userCount).map { it.cards.size }
             val exactCount = LuckyGame.cardCountMap[userCount] ?: AssertionError("등록되지 않은 유저 수: $userCount")
 
             if (activeUserCardCounts.any { it != exactCount })
@@ -145,7 +145,7 @@ class LuckyGameTest {
     fun sortUserCardsByNum_CardsInRandomOrder_NumsInAscOrder() {
         luckyGame.sortUserCardsByNum()
 
-        val usersCards = luckyGame.getUsers().map { it.cards }
+        val usersCards = luckyGame.users.map { it.cards }
         for (cards in usersCards) {
             // 단 하나라도 다음 카드보다 번호가 크면 false
             if (cards.zipWithNext().any { (prev, next) -> prev.num > next.num })
@@ -171,7 +171,7 @@ class LuckyGameTest {
     // 같은 번호 카드 세장을 가진 유저가 있는지 테스트
     @Test
     fun findTripleCardsUsers_FirstUserHasTripleCards_FindAtLeastOneUser() {
-        val users = luckyGame.getUsers()
+        val users = luckyGame.users
         val userOne = users.first()
         val cardCount = LuckyGame.cardCountMap[MAX_USER] ?: throw AssertionError("카드 장 수가 설정되어 있지 않은 인원 수: $MAX_USER")
 
@@ -192,7 +192,7 @@ class LuckyGameTest {
     @Test
     fun compareTwoUsersCardWithLeftCard_TwoUsersHaveNumberOfLeftCardsAbsolutely_MatchWithLeftCardAtLeastOnce() {
         val leftCards = luckyGame.getLeftCards()
-        val users = luckyGame.getUsers()
+        val users = luckyGame.users
 
         // 두 유저가 남은 카드와 똑같은 카드를 갖도록 조작
         val userOne = users[0]
