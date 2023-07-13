@@ -1,4 +1,4 @@
-package com.example.luckycardgame.data
+package com.example.luckycardgame.data.model
 
 // String이나 Int 등으로 Dog, Cat, Cow를 구분하는 것보다 enum이 정확하다고 생각합니다.
 // 유니코드를 내부 속성으로 가져 활용이 원활해지도록 구현
