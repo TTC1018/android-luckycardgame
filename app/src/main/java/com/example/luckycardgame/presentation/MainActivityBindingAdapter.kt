@@ -8,15 +8,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luckycardgame.data.model.Card
 import com.example.luckycardgame.data.model.LuckyGame
+import com.example.luckycardgame.data.model.OnFlipCardListener
 import com.example.luckycardgame.data.model.User
 import kotlin.math.ceil
 
 // 유저 카드 간격 설정용
-@BindingAdapter("showCardsOfUser")
-fun RecyclerView.showCardsOfUser(user: User?) {
+@BindingAdapter(value = ["showCardsOfUser", "onFlipCard"])
+fun RecyclerView.showCardsAndSetFlipFunction(user: User?, onFlipCardListener: OnFlipCardListener) {
     user?.let { u ->
         if (adapter == null) {
-            this.adapter = MyCardAdapter(u.userId)
+            this.adapter = MyCardAdapter(u.userId, onFlipCardListener)
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
                     outRect: Rect,
@@ -44,7 +45,9 @@ fun RecyclerView.showCardsOfUser(user: User?) {
 fun RecyclerView.showLeftCards(leftCards: List<Card>?, userCount: Int?) {
     leftCards?.let {
         if (adapter == null) {
-            this.adapter = MyCardAdapter(-1)
+            this.adapter = MyCardAdapter(-1, object: OnFlipCardListener {
+                override fun onFlipCard(userId: Int, cardPos: Int) { }
+            })
             (this.layoutManager as GridLayoutManager).spanCount = 2
 
             addItemDecoration(object : RecyclerView.ItemDecoration() {

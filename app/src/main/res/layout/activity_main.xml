@@ -84,6 +84,7 @@
             app:layout_constraintStart_toStartOf="@id/tv_first"
             app:layout_constraintTop_toTopOf="@+id/tv_first"
             app:showCardsOfUser="@{viewModel.users[0]}"
+            app:onFlipCard="@{viewModel}"
             tools:listitem="@layout/item_card"
             tools:orientation="horizontal" />
 
@@ -109,6 +110,7 @@
             app:layout_constraintStart_toStartOf="@+id/tv_second"
             app:layout_constraintTop_toTopOf="@+id/tv_second"
             app:showCardsOfUser="@{viewModel.users[1]}"
+            app:onFlipCard="@{viewModel}"
             tools:listitem="@layout/item_card"
             tools:orientation="horizontal" />
 
@@ -134,6 +136,7 @@
             app:layout_constraintStart_toStartOf="@+id/tv_third"
             app:layout_constraintTop_toTopOf="@+id/tv_third"
             app:showCardsOfUser="@{viewModel.users[2]}"
+            app:onFlipCard="@{viewModel}"
             tools:listitem="@layout/item_card"
             tools:orientation="horizontal" />
 
@@ -161,6 +164,7 @@
             app:layout_constraintStart_toStartOf="@+id/tv_fourth"
             app:layout_constraintTop_toTopOf="@+id/tv_fourth"
             app:showCardsOfUser="@{viewModel.users[3]}"
+            app:onFlipCard="@{viewModel}"
             tools:listitem="@layout/item_card"
             tools:orientation="horizontal" />
 
@@ -190,6 +194,7 @@
             app:layout_constraintStart_toStartOf="@+id/tv_fifth"
             app:layout_constraintTop_toTopOf="@+id/tv_fifth"
             app:showCardsOfUser="@{viewModel.users[4]}"
+            app:onFlipCard="@{viewModel}"
             tools:listitem="@layout/item_card"
             tools:orientation="horizontal" />
 

@@ -15,21 +15,31 @@ import com.example.luckycardgame.data.model.Card
 import com.example.luckycardgame.data.model.LuckyGame
 import com.example.luckycardgame.data.model.MAX_CARD_COUNT
 import com.example.luckycardgame.data.model.MIN_USER
+import com.example.luckycardgame.data.model.OnFlipCardListener
 import com.example.luckycardgame.databinding.ItemCardBinding
 import kotlin.math.ceil
 
-class MyCardAdapter(val userId: Int) : ListAdapter<Card, MyCardViewHolder>(diffUtil) {
+class MyCardAdapter(
+    private val userId: Int,
+    private val onFlipCardListener: OnFlipCardListener
+) : ListAdapter<Card, MyCardViewHolder>(diffUtil), OnCardClickListener {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyCardViewHolder =
         MyCardViewHolder(
             ItemCardBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ), this
         )
 
     override fun onBindViewHolder(holder: MyCardViewHolder, position: Int) {
         holder.bind(getItem(position), userId)
+    }
+
+    override fun onCardClick(userId: Int, pos: Int) {
+        onFlipCardListener.onFlipCard(userId, pos)
+        notifyItemChanged(pos)
     }
 
     companion object {
@@ -46,7 +56,10 @@ class MyCardAdapter(val userId: Int) : ListAdapter<Card, MyCardViewHolder>(diffU
     }
 }
 
-class MyCardViewHolder(val binding: ItemCardBinding) : RecyclerView.ViewHolder(binding.root) {
+class MyCardViewHolder(
+    val binding: ItemCardBinding,
+    val onCardClick: OnCardClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
 
     private var lifecycleOwner: LifecycleOwner? = null
 
@@ -62,6 +75,9 @@ class MyCardViewHolder(val binding: ItemCardBinding) : RecyclerView.ViewHolder(b
     fun bind(card: Card, userId: Int) {
         binding.card = card
         binding.userId = userId
+        binding.position = adapterPosition
+        binding.onCardClickListener = onCardClick
+        binding.lifecycleOwner = lifecycleOwner
 
         // 화면 가로 길이의 특정 비율로 가로 길이 재조정
         with(binding.root) {
@@ -76,7 +92,8 @@ class MyCardViewHolder(val binding: ItemCardBinding) : RecyclerView.ViewHolder(b
                     // 최하단 남은 카드는 길이 배치 다르게 설정하기
                     layoutParams.width =
                         if (userId == -1 && cardCount != LuckyGame.cardCountMap[5]) {
-                            val cardNumWhenMaxUser = LuckyGame.cardCountMap[MIN_USER] ?: throw Exception("잘못된 카드 장수: $cardCount")
+                            val cardNumWhenMaxUser = LuckyGame.cardCountMap[MIN_USER]
+                                ?: throw Exception("잘못된 카드 장수: $cardCount")
                             val leftCards = MAX_CARD_COUNT - cardNumWhenMaxUser * MIN_USER
                             ceil(width * (0.85 / ceil(leftCards.toDouble() / 2))).toInt()
                         } else
@@ -87,6 +104,9 @@ class MyCardViewHolder(val binding: ItemCardBinding) : RecyclerView.ViewHolder(b
             })
         }
     }
+}
 
+interface OnCardClickListener {
+    fun onCardClick(userId: Int, pos: Int)
 }
 

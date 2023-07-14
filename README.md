@@ -5,6 +5,8 @@
 2. [럭키 카드 클래스 구현하기](#Task-2)
 3. [카드 나눠주기](#Task-3)
 4. [게임 로직 구현하기](#Task-4)
+5. [게임규칙 추가하기](#Task-5)
+6. [결과 화면 만들기](#Task-6)
 
 ## Task 1
 * `ConstraintLayout` 활용으로 최대한 단일 계층으로 구현
@@ -106,3 +108,17 @@
   * 남은 카드를 번호 기준으로 정렬 후에 비내림차순인지
   * 같은 번호 카드 세장을 가진 유저가 있는지
   * 두 유저가 최소/최대 번호가 같은 카드를 가질 때, 랜덤 카드를 포함해 셋이 비교시 같은지 판단할 수 있는지
+
+## Task 5
+### 카드 뒤집기 구현
+* `Card` 클래스에 뒤집힘 상태 정의 (`var flipped: Boolean`)
+* ClickListener를 선언, 실제로 model의 값도 함께 갱신하고 databinding으로 연동
+
+#### OnFlipCardListener
+* `onFlipCard(userId: Int, cardPos: Int)`: 특정 유저의 카드를 뒤집는 함수. 현재 뒤집을 수 있는 카드라면 뒤집는다. (가장 왼쪽 혹은 오른쪽이면)
+* `LuckyGame` 및 `MainActivityViewModel` 이 상속받아 함수 정의
+
+#### OnCardClickListener
+* `onCardClick(userId: Int, pos: Int)`: 카드 ViewHolder를 클릭했을 때 실행하는 함수. `onFlipCard`와 adapter의 `notify...`을 호출
+
+## Task 6

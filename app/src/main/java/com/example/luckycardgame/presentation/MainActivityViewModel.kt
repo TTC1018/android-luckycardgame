@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.luckycardgame.data.model.Card
 import com.example.luckycardgame.data.model.LuckyGame
+import com.example.luckycardgame.data.model.OnFlipCardListener
 import com.example.luckycardgame.data.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -12,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val luckyGame: LuckyGame
-): ViewModel() {
+): ViewModel(), OnFlipCardListener {
     private val TAG = this.javaClass.simpleName
 
     private val _userCount = MutableLiveData<Int>()
@@ -30,5 +31,9 @@ class MainActivityViewModel @Inject constructor(
 
         _users.value = luckyGame.users
         _leftCards.value = luckyGame.getLeftCards()
+    }
+
+    override fun onFlipCard(userId: Int, cardPos: Int) {
+        luckyGame.onFlipCard(userId, cardPos)
     }
 }
