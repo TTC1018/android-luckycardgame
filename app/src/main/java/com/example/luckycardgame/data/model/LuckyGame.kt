@@ -16,7 +16,7 @@ class LuckyGame(
     val users: List<User> = List(MAX_USER) { User(it, emptyList()) }
     private var shuffledCards: List<Card> = emptyList()
     private var leftCards: List<Card> = emptyList()
-    private val cardIdxes = Array(MAX_USER) { intArrayOf(0, cardCountMap[MAX_USER] ?: throw Exception("등록되지 않은 유저 수: $MAX_USER")).also { it[1]-- } }
+    private val cardIdxes: List<IntArray> = List(MAX_USER) { intArrayOf(0, cardCountMap[MAX_USER] ?: throw Exception("등록되지 않은 유저 수: $MAX_USER")).also { it[1]-- } }
 
     fun resetGame(userCount: Int) {
         clearAllHands(userCount)
@@ -43,7 +43,9 @@ class LuckyGame(
         
         // 양쪽 참조 인덱스 초기화
         for (i in cardIdxes.indices) {
-            cardIdxes[i] = intArrayOf(0, cardCountMap[userCount] ?: throw Exception("등록되지 않은 유저 수: $userCount")).apply { this[1]-- }
+            cardIdxes[i][0] = 0
+            cardIdxes[i][1] = cardCountMap[userCount] ?: throw Exception("등록되지 않은 유저 수: $userCount")
+            cardIdxes[i][1]--
         }
 
         // 유저 카드 목록 초기화
