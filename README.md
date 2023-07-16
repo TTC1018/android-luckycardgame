@@ -121,4 +121,30 @@
 #### OnCardClickListener
 * `onCardClick(userId: Int, pos: Int)`: 카드 ViewHolder를 클릭했을 때 실행하는 함수. `onFlipCard`와 adapter의 `notify...`을 호출
 
+### 승자 판단 구현
+#### `Card` 클래스에 매칭된 카드임을 구분하는 속성값 선언
+* `matched: Boolean`: 동일한 카드 3장 매칭될 경우 `true`로 변경
+
+#### `LuckyGame` 클래스에 게임 종료 상태 변수 및 승자 변수 선언
+* `endFlag: Boolean`: 게임이 끝난 경우 `true`로 변경됨
+* `winners: Set<Int>`: 승자의 `userId`가 담김. 승자가 없는 경우 비어 있음
+
+#### 턴 개념 추가
+**변수**  
+* `chanceCounter: IntArray`: 3으로 초기화되어 있으며, 카드를 뒤집을 때마다 `userId`에 맞는 위치가 1씩 줄어듦. 턴이 끝나면 다시 3으로 초기화
+* `flippedCounter: Array<Map<Int, Int>>`: `userId`별로 현재까지 뒤집은 카드의 번호를 기록하는 변수
+
+**함수**  
+* `resetRound(userCount: Int)`: `flippedCounter`에 기록된 뒤집힌 카드 정보를 초기화
+* `clearTurn(userCount: Int)`: `chanceCounter`에 기록된 카드 뒤집기 기회를 3으로 초기화
+* `checkPicked(userId: Int, cardIdx: Int)`: 유저 카드 목록의 `cardIdx`에 위치한 카드와 동일한 번호를 갖는 뒤집힌 3장의 카드가 존재하면, 해당 카드들의 인덱스를 리턴
+* `isEndOfTurn(): Boolean`: 모든 유저가 카드 뒤집기 기회를 다 소모했거나, 가능한 뒤집을 카드가 없을 때 `true` 리턴
+* `checkTurnContinue(): Set<Int>`: 게임이 아예 종료되는지를 판단하고, 승자들의 `userId`를 `Set`에 담아 리턴
+
+#### `LuckyGame` 클래스에 승자 판단 함수 선언
+* `findWinner(): Set<Int>`: 7 카드 보유자 혹은 합/차가 7이 되는 카드 보유자들을 `Set`에 담아 리턴
+* `findSevenSumOwners(): Collection<Int>`: 합/차가 7이 되는 카드 보유자들을 조합으로 찾음
+* `findSevenOwner(): Collection<Int>`: 7카드 세장을 보유한 유저들을 찾음
+
+
 ## Task 6

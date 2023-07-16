@@ -6,4 +6,5 @@
     <string name="board_fourth_name">D</string>
     <string name="board_fifth_name">E</string>
     <string name="people_num">%1$d명</string>
+    <string name="msg_game_end">승자 없이 게임이 종료되었습니다</string>
 </resources>

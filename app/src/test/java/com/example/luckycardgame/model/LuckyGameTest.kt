@@ -205,5 +205,188 @@ class LuckyGameTest {
         val sameCount = leftCards.count { leftCard -> luckyGame.compareTwoUsersCardWithLeftCard(0, 1, leftCard) }
         assert(sameCount >= 2)
     }
+
+    @Test
+    fun onFlipCard_AllUsersHaveDifferentCards_NoWinner() {
+        val users = luckyGame.getUsers()
+        val cardCount = LuckyGame.cardCountMap[MAX_USER] ?: throw AssertionError("등록되지 않은 유저 수: $MAX_USER")
+
+        users.forEach { user ->
+            user.cards = List(cardCount) { i -> Card(animalTypes[i % animalTypes.size], i) }
+        }
+
+        repeat(6) {
+            for (userId in 0 until MAX_USER) {
+                luckyGame.onFlipCard(userId, it)
+            }
+        }
+
+        val winners = luckyGame.getWinners()
+        assertTrue(winners.isEmpty())
+    }
+
+    @Test
+    fun onFlipCard_UserOneHasSevenCards_WinnerisUserOne() {
+        val users = luckyGame.getUsers()
+        val userOne = users[0]
+
+        // 첫번째 유저가 7 세장을 갖도록 조작
+        userOne.cards = buildList {
+            add(Card(AnimalType.CAT, 7))
+            add(Card(AnimalType.DOG, 7))
+            add(Card(AnimalType.COW, 7))
+            add(Card(AnimalType.CAT, 1))
+            add(Card(AnimalType.DOG, 2))
+            add(Card(AnimalType.COW, 3))
+        }
+
+        repeat(3) {
+            for (userId in 0 until MAX_USER) {
+                luckyGame.onFlipCard(userId, it)
+            }
+        }
+
+        assertTrue(0 in luckyGame.getWinners())
+        assertTrue(luckyGame.getEndFlag())
+    }
+
+    @Test
+    fun onFlipCard_UserOneIsOneAndTwoIsSix_WinnersAreUserOneAndTwo() {
+        val users = luckyGame.getUsers()
+        val userOne = users[0]
+        val userTwo = users[1]
+
+        // 첫번째 유저가 1 세장을 갖도록 조작
+        userOne.cards = buildList {
+            add(Card(AnimalType.CAT, 1))
+            add(Card(AnimalType.DOG, 1))
+            add(Card(AnimalType.COW, 1))
+            add(Card(AnimalType.CAT, 3))
+            add(Card(AnimalType.DOG, 4))
+            add(Card(AnimalType.COW, 5))
+        }
+
+        // 두번째 유저가 6 세장을 갖도록 조작
+        userTwo.cards = buildList {
+            add(Card(AnimalType.CAT, 6))
+            add(Card(AnimalType.DOG, 6))
+            add(Card(AnimalType.COW, 6))
+            add(Card(AnimalType.CAT, 3))
+            add(Card(AnimalType.DOG, 4))
+            add(Card(AnimalType.COW, 5))
+        }
+
+        repeat(3) {
+            for (userId in users.indices) {
+                luckyGame.onFlipCard(userId, it)
+            }
+        }
+
+        val winners = luckyGame.getWinners()
+        assertTrue(0 in winners && 1 in winners)
+        assertTrue(luckyGame.getEndFlag())
+    }
+
+    @Test
+    fun onFlipCard_TwoFiveTwelveCardsExist_AtLeastThreeUsersWinners() {
+        val users = luckyGame.getUsers()
+        val userOne = users[0]
+        val userTwo = users[1]
+        val userThree = users[2]
+
+        // 첫번째 유저가 2 세장을 갖도록 조작
+        userOne.cards = buildList {
+            add(Card(AnimalType.CAT, 2))
+            add(Card(AnimalType.DOG, 2))
+            add(Card(AnimalType.COW, 2))
+            add(Card(AnimalType.CAT, 1))
+            add(Card(AnimalType.DOG, 3))
+            add(Card(AnimalType.COW, 4))
+        }
+        // 두번째 유저가 5 세장을 갖도록 조작
+        userTwo.cards = buildList {
+            add(Card(AnimalType.CAT, 5))
+            add(Card(AnimalType.DOG, 5))
+            add(Card(AnimalType.COW, 5))
+            add(Card(AnimalType.CAT, 6))
+            add(Card(AnimalType.DOG, 7))
+            add(Card(AnimalType.COW, 8))
+        }
+        // 세번째 유저가 12 세장을 갖도록 조작
+        userThree.cards = buildList {
+            add(Card(AnimalType.CAT, 12))
+            add(Card(AnimalType.DOG, 12))
+            add(Card(AnimalType.COW, 12))
+            add(Card(AnimalType.CAT, 9))
+            add(Card(AnimalType.DOG, 10))
+            add(Card(AnimalType.COW, 11))
+        }
+
+        repeat(3) {
+            for (userId in users.indices) {
+                luckyGame.onFlipCard(userId, it)
+            }
+        }
+
+        val winners = luckyGame.getWinners()
+        assertTrue(0 in winners && 1 in winners && 2 in winners)
+        assertTrue(luckyGame.getEndFlag())
+    }
+
+    @Test
+    fun onFlipCard_TwoFiveSevenTwelveCardsExist_AtFourThreeUsersWinners() {
+        val users = luckyGame.getUsers()
+        val userOne = users[0]
+        val userTwo = users[1]
+        val userThree = users[2]
+        val userFour = users[3]
+
+        // 첫번째 유저가 2 세장을 갖도록 조작
+        userOne.cards = buildList {
+            add(Card(AnimalType.CAT, 2))
+            add(Card(AnimalType.DOG, 2))
+            add(Card(AnimalType.COW, 2))
+            add(Card(AnimalType.CAT, 1))
+            add(Card(AnimalType.DOG, 3))
+            add(Card(AnimalType.COW, 4))
+        }
+        // 두번째 유저가 5 세장을 갖도록 조작
+        userTwo.cards = buildList {
+            add(Card(AnimalType.CAT, 5))
+            add(Card(AnimalType.DOG, 5))
+            add(Card(AnimalType.COW, 5))
+            add(Card(AnimalType.CAT, 6))
+            add(Card(AnimalType.DOG, 8))
+            add(Card(AnimalType.COW, 9))
+        }
+        // 세번째 유저가 12 세장을 갖도록 조작
+        userThree.cards = buildList {
+            add(Card(AnimalType.CAT, 12))
+            add(Card(AnimalType.DOG, 12))
+            add(Card(AnimalType.COW, 12))
+            add(Card(AnimalType.CAT, 9))
+            add(Card(AnimalType.DOG, 10))
+            add(Card(AnimalType.COW, 11))
+        }
+        // 네번째 유저가 7 세장을 갖도록 조작
+        userFour.cards = buildList {
+            add(Card(AnimalType.CAT, 7))
+            add(Card(AnimalType.DOG, 7))
+            add(Card(AnimalType.COW, 7))
+            add(Card(AnimalType.CAT, 9))
+            add(Card(AnimalType.DOG, 10))
+            add(Card(AnimalType.COW, 11))
+        }
+
+        repeat(3) {
+            for (userId in users.indices) {
+                luckyGame.onFlipCard(userId, it)
+            }
+        }
+
+        val winners = luckyGame.getWinners()
+        assertTrue(0 in winners && 1 in winners && 2 in winners && 3 in winners)
+        assertTrue(luckyGame.getEndFlag())
+    }
 }
 

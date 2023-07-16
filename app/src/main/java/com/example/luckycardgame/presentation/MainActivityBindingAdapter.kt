@@ -1,23 +1,27 @@
 package com.example.luckycardgame.presentation
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.graphics.Rect
 import android.view.View
+import android.view.animation.AccelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luckycardgame.data.model.Card
+import com.example.luckycardgame.data.model.CardCheckable
 import com.example.luckycardgame.data.model.LuckyGame
-import com.example.luckycardgame.data.model.OnFlipCardListener
 import com.example.luckycardgame.data.model.User
 import kotlin.math.ceil
 
 // 유저 카드 간격 설정용
-@BindingAdapter(value = ["showCardsOfUser", "onFlipCard"])
-fun RecyclerView.showCardsAndSetFlipFunction(user: User?, onFlipCardListener: OnFlipCardListener) {
+@BindingAdapter(value = ["showCardsOfUser", "onFlipCard", "checkPicked"])
+fun RecyclerView.showCardsAndSetFlipFunction(user: User?, onFlipCardListener: OnFlipCardListener, cardCheckable: CardCheckable) {
     user?.let { u ->
         if (adapter == null) {
-            this.adapter = MyCardAdapter(u.userId, onFlipCardListener)
+            this.adapter = MyCardAdapter(u.userId, onFlipCardListener, cardCheckable)
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
                     outRect: Rect,
@@ -45,8 +49,10 @@ fun RecyclerView.showCardsAndSetFlipFunction(user: User?, onFlipCardListener: On
 fun RecyclerView.showLeftCards(leftCards: List<Card>?, userCount: Int?) {
     leftCards?.let {
         if (adapter == null) {
-            this.adapter = MyCardAdapter(-1, object: OnFlipCardListener {
-                override fun onFlipCard(userId: Int, cardPos: Int) { }
+            this.adapter = MyCardAdapter(-1, object : OnFlipCardListener {
+                override fun onFlipCard(userId: Int, cardPos: Int) {}
+            }, object : CardCheckable {
+                override fun checkPicked(userId: Int, cardIdx: Int): List<Int> = emptyList()
             })
             (this.layoutManager as GridLayoutManager).spanCount = 2
 
@@ -86,5 +92,24 @@ fun RecyclerView.showLeftCards(leftCards: List<Card>?, userCount: Int?) {
             5 -> 1
             else -> 2
         }
+    }
+}
+
+// 3장 매칭된 카드 사라지는 효과
+@BindingAdapter("fadeOutIfPicked")
+fun View.fadeOutIfPicked(picked: Boolean) {
+    if (picked) {
+        ObjectAnimator.ofFloat(this, "alpha", 0.0f)
+            .apply {
+                duration = 1000
+                interpolator = AccelerateInterpolator()
+                addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        this@fadeOutIfPicked.visibility = View.GONE
+                    }
+                })
+            }.start()
+    } else {
+        this.visibility = View.VISIBLE
     }
 }
